@@ -1,533 +1,426 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>STS Institute | IELTS Computer Lab Booking System - Reserve Your Seat Online</title>
-    
-    <!-- Primary Meta Tags -->
-    <meta name="title" content="STS Institute | IELTS Computer Lab Booking System - Reserve Your Seat Online">
-    <meta name="description" content="Book your IELTS computer lab session at STS Institute. Reserve seats online for convenient practice and testing sessions with our state-of-the-art facilities.">
-    <meta name="keywords" content="IELTS, computer lab, STS Institute, seat booking, test preparation, English test, IELTS practice, lab reservation">
-    <meta name="author" content="STS Institute">
-    <meta name="robots" content="index, follow">
-    
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://booking.sts.institute">
-    <meta property="og:title" content="STS Institute | IELTS Computer Lab Booking System">
-    <meta property="og:description" content="Reserve your IELTS computer lab session online at STS Institute">
-    <meta property="og:image" content="https://cdielts.sts.institute/wp-content/uploads/2025/07/cropped-favicon-01.jpg">
-    
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://booking.sts.institute">
-    <meta property="twitter:title" content="STS Institute | IELTS Computer Lab Booking System">
-    <meta property="twitter:description" content="Reserve your IELTS computer lab session online at STS Institute">
-    <meta property="twitter:image" content="https://cdielts.sts.institute/wp-content/uploads/2025/07/logo-01-300x162.png">
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="https://cdielts.sts.institute/wp-content/uploads/2025/07/cropped-favicon-01.jpg">
-    
-    <!-- Tailwind CSS via CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- jQuery for AJAX -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <style>
-        .seat {
-            transition: all 0.2s ease;
-            min-width: 40px;
-            min-height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 500;
-            position: relative;
-        }
-        .seat.available:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 8px #f3802080;
-        }
-        .seat.booked {
-            opacity: 0.7;
-            cursor: not-allowed;
-        }
-        .modal {
-            transition: all 0.3s ease;
-        }
-        .animate-spin {
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .seat-map-container {
-            min-height: 300px;
-        }
-        .icon-red {
-            color: #ed2227;
-        }
-        .date-btn.active {
-            background-color: #ed2227;
-            color: white;
-            border-color: #ed2227;
-        }
-        .laptop-icon {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 18px;
-        }
-        .seat-number {
-            position: absolute;
-            bottom: 2px;
-            right: 2px;
-            font-size: 10px;
-            font-weight: bold;
-        }
-    </style>
-</head>
-<body class="bg-gray-50">
-    <!-- Header -->
-    <header class="bg-[#1C2A39] text-white shadow-md">
-        <div class="container mx-auto px-4 py-4">
-            <div class="flex flex-col items-center justify-center">
-                <img src="https://cdielts.sts.institute/wp-content/uploads/2025/07/logo-01-300x162.png" 
-                     alt="CD-IELTS Logo" 
-                     class="h-16 mb-2">
-                <h1 class="text-2xl font-bold text-center">IELTS on Computer LAB Booking System</h1>
-            </div>
-        </div>
-    </header>
-
-    <!-- Main Content -->
-    <main class="container mx-auto px-4 py-8">
-        <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden p-6">
-            <h2 class="text-2xl font-bold text-gray-800 mb-6">Book Your Seat</h2>
-
-            <!-- Location Information -->
-            <div class="mb-8 bg-gray-50 p-5 rounded-lg border border-gray-200">
-               
-                <div class="flex flex-col md:flex-row gap-6">
-                    <div class="flex-1">
-                        <p class="font-medium icon-red mb-1">Training Room-6 (Lab)</p>
-                        <p class="text-gray-600"><i class="fas fa-map-marker-alt icon-red mr-2"></i>Jamuna Bank Building (lift-6), C&B Road, Narsingdi Sadar.</p>
-                        <p class="text-gray-600">
-                            <i class="fas fa-phone icon-red mr-2"></i>
-                            <b>Contact:</b> 019014-02203
-                        </p>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Date Selection -->
-            <div class="mb-8">
-                <h3 class="text-lg font-semibold text-gray-700 mb-3">Select Date</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    @php
-                        $today = now();
-                        $dates = [
-                            $today->format('Y-m-d') => 'Today',
-                            $today->addDay()->format('Y-m-d') => 'Tomorrow',
-                            $today->addDay()->format('Y-m-d') => $today->format('l')
-                        ];
-                    @endphp
-                    
-                    @foreach($dates as $date => $label)
-                        <button class="date-btn bg-gray-100 hover:bg-gray-200 text-gray-800 py-3 px-4 rounded-lg border border-gray-300 transition-colors text-left flex flex-col"
-                                data-date="{{ $date }}">
-                            <span class="font-medium block">{{ $label }}</span>
-                            <span class="text-sm text-black-bold">{{ \Carbon\Carbon::parse($date)->format('D, M j') }}</span>
-                        </button>
-                    @endforeach
-                </div>
-            </div>
-            
-        <!-- Time Slots and Seats -->
-        <div id="timeSlotsContainer" class="hidden mb-8">
-            <div class="flex justify-between items-center mb-3">
-                <h3 class="text-lg font-semibold text-gray-700">Available Time Slots</h3>
-                <div id="selectedDateDisplay" class="text-sm text-gray-500"></div>
-            </div>
-            <div id="timeSlotsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Time slots will be loaded here -->
-            </div>
-        </div>
+<!doctype html>
+<html data-capo="">
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Bangladesh Open University - Result Search</title>
+        <link rel="icon" type="image/png" sizes="32x32" href="https://result.bou.ac.bd/img/bou-logo-lg.png">
+        <link rel="stylesheet" href="{{ asset('css/tailwind-custom.css') }}">
+        <link rel="stylesheet" href="{{ asset('css/custom-theme.css') }}">
         
-        <!-- Messages -->
-        <div id="messageContainer" class="hidden mb-4 p-4 rounded-lg border-l-4"></div>
-        </div>
-    </main>
+    </head>
+    <body>
+        <div>
+            <div>
+                <div>
+                    <div class="min-h-screen flex flex-col bg-white">
+                        <header
+                            class="sticky top-0 z-40 w-full border-b border-b-slate-200 bg-white/75 backdrop-blur-sm"
+                        >
+                            <div class="container mx-auto px-4">
+                                <div class="flex h-16 items-center justify-center">
+                                    <a href="/">
+                                        <div class="flex items-center">
+                                            <!-- University Logo - Replace with actual image file -->
+                                            <img
+                                                src="https://result.bou.ac.bd/img/bou-logo-lg.png"
+                                                alt="BOU"
+                                                class="img-fluid header-logo-img mt-2 mr-2"
+                                                title="Bangladesh Open University"
+                                                width="55"
+                                                height="55"
+                                            />
+                                            <!-- University Banner - Replace with actual image file -->
+                                            <img
+                                                src="https://result.bou.ac.bd/img/header.png"
+                                                alt="Bangladesh Open University"
+                                                width="350"
+                                                height="55"
+                                                class="img-fluid header-banner-img hidden md:block"
+                                                title="Bangladesh Open University"
+                                            />
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </header>
 
-    <!-- Booking Modal -->
-    <div id="bookingModal" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50 p-4 modal">
-        <div class="bg-white rounded-lg p-6 w-full max-w-md">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-semibold text-gray-800">Confirm Booking</h3>
-                <button id="cancelBooking" class="text-gray-500 hover:text-gray-700">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            
-            <form id="bookSeatForm">
-                @csrf
-                <input type="hidden" id="modalDate" name="date">
-                <input type="hidden" id="modalTimeSlot" name="time_slot_id">
-                <input type="hidden" id="modalSeat" name="seat">
-                
-                <div class="mb-4">
-                    <div class="flex items-center mb-2">
-                        <div class="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
-                        <span id="selectedSlotInfo" class="font-medium"></span>
-                    </div>
-                    <div class="flex items-center">
-                        <div class="w-3 h-3 bg-blue-900 rounded-full mr-2"></div>
-                        <span id="selectedSeatInfo" class="font-medium"></span>
-                    </div>
-                </div>
-                
-                <div class="mb-4">
-                    <label for="studentId" class="block text-gray-700 mb-2">Student ID <span class="text-red-500">*</span></label>
-                    <input type="text" id="studentId" name="std_id" 
-                           class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                           required placeholder="Enter your student ID" autocomplete="off">
-                    <div id="studentMessage" class="mt-1 text-sm"></div>
-                </div>
-                
-                <div class="flex justify-end space-x-3">
-                    <button type="button" id="cancelBookingBtn" 
-                            class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition-colors">
-                        Cancel
-                    </button>
-                    <button type="submit" id="submitBtn"
-                            class="px-4 py-2 bg-blue-900 text-white rounded-md hover:bg-blue-800 transition-colors flex items-center justify-center">
-                        <span id="submitBtnText">Confirm Booking</span>
-                    </button>
-                </div>
+                        <main class="flex-grow container mx-auto py-2 px-4 sm:px-6 lg:px-8">
+                            <div class="text-center mt-4 mb-8">
+                                <h2 class="text-3xl font-bold mb-2 text-gray-800">Search Your Result</h2>
+                                <p class="text-sm text-gray-600">Enter your Student ID to view your results</p>
+                            </div>
 
-                <div id="bookingStatusMessage" class="hidden mt-4 p-3 rounded-lg"></div>
-            </form>
+                            <form method="GET" action="" class="max-w-md mx-auto mb-8">
+                                <div class="relative">
+                                    <input
+                                        type="text"
+                                        name="student_id"
+                                        value=""
+                                        placeholder="Enter student ID without (-)hyphen"
+                                        class="w-full py-2 px-4 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:border-transparent rounded-md"
+                                    />
+                                    <button
+                                        type="submit"
+                                        class="absolute right-0 top-0 bottom-0 px-4 bg-gray-700 hover:bg-gray-800 text-white rounded-r-md"
+                                    >
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg"
+                                            width="24"
+                                            height="24"
+                                            viewBox="0 0 24 24"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            stroke-width="2"
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            class="h-5 w-5"
+                                        >
+                                            <circle cx="11" cy="11" r="8"></circle>
+                                            <path d="m21 21-4.3-4.3"></path>
+                                        </svg>
+                                        <span class="sr-only">Search</span>
+                                    </button>
+                                </div>
+                            </form>
+
+
+                            <div data-v-390fc2b0="" class="w-full max-w-4xl space-y-6 mx-auto">
+    <div data-v-390fc2b0="" class="flex justify-end mb-4">
+        <button
+            data-v-390fc2b0=""
+            class="bg-gray-700 hover:bg-gray-800 text-white px-4 py-2 rounded-md flex items-center"
+        >
+            <svg
+                data-v-390fc2b0=""
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                class="lucide lucide-download-icon h-5 w-5 mr-2"
+            >
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" x2="12" y1="15" y2="3"></line></svg
+            ><span data-v-390fc2b0="">Download</span>
+        </button>
+    </div>
+    <div data-v-390fc2b0="" class="bg-white shadow rounded-lg">
+        <div data-v-390fc2b0="" class="p-4">
+            <h3 data-v-390fc2b0="" class="text-lg font-semibold mb-2">Student Information</h3>
+            <dl data-v-390fc2b0="" class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 text-sm">
+                <div data-v-390fc2b0="" class="flex justify-between sm:col-span-1">
+                    <dt data-v-390fc2b0="" class="font-semibold">Program:</dt>
+                    <dd data-v-390fc2b0="" class="">Higher Secondary Certificate</dd>
+                </div>
+                <div data-v-390fc2b0="" class="flex justify-between sm:col-span-1">
+                    <dt data-v-390fc2b0="" class="font-semibold">Study Center:</dt>
+                    <dd data-v-390fc2b0="" class="">Hazi Belayet Hossain College, Narayanganj</dd>
+                </div>
+                <div data-v-390fc2b0="" class="flex justify-between sm:col-span-1">
+                    <dt data-v-390fc2b0="" class="font-semibold">Student I D:</dt>
+                    <dd data-v-390fc2b0="" class="">20011040020</dd>
+                </div>
+                <div data-v-390fc2b0="" class="flex justify-between sm:col-span-1">
+                    <dt data-v-390fc2b0="" class="font-semibold">Student Name:</dt>
+                    <dd data-v-390fc2b0="" class="">KAZI SHAHANA AFROJA</dd>
+                </div>
+                <div data-v-390fc2b0="" class="flex justify-between sm:col-span-1">
+                    <dt data-v-390fc2b0="" class="font-semibold">Father Name:</dt>
+                    <dd data-v-390fc2b0="" class="">KAZI MOSLE UDDIN AHMED</dd>
+                </div>
+                <div data-v-390fc2b0="" class="flex justify-between sm:col-span-1">
+                    <dt data-v-390fc2b0="" class="font-semibold">Mother Name:</dt>
+                    <dd data-v-390fc2b0="" class="">ROWSHON ARA BEGUM</dd>
+                </div>
+                <div data-v-390fc2b0="" class="flex justify-between sm:col-span-1">
+                    <dt data-v-390fc2b0="" class="font-semibold">Batch:</dt>
+                    <dd data-v-390fc2b0="" class="">20</dd>
+                </div>
+                <div data-v-390fc2b0="" class="flex justify-between sm:col-span-1">
+                    <dt data-v-390fc2b0="" class="font-semibold">Passing Year:</dt>
+                    <dd data-v-390fc2b0="" class="">2022</dd>
+                </div>
+                <div data-v-390fc2b0="" class="flex justify-between sm:col-span-1">
+                    <dt data-v-390fc2b0="" class="font-semibold">G P A:</dt>
+                    <dd data-v-390fc2b0="" class="">2.91</dd>
+                </div>
+            </dl>
         </div>
     </div>
-
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-6 mt-12">
-        <div class="container mx-auto px-4 text-center">
-            <p>&copy; {{ date('Y') }} CD-IELTS LAB Booking System. All rights reserved.</p>
-        </div>
-    </footer>
-
-   <script>
-    $(document).ready(function() {
-    // Initialize with today's date
-    const today = new Date().toISOString().split('T')[0];
-    $('.date-btn[data-date="'+today+'"]').addClass('active');
-    loadTimeSlots(today);
-    
-    // Date selection handler
-    $('.date-btn').on('click', function() {
-        const date = $(this).data('date');
-        const formattedDate = new Date(date).toLocaleDateString('en-US', { 
-            weekday: 'long', 
-            year: 'numeric', 
-            month: 'long', 
-            day: 'numeric' 
-        });
-        
-        // Update UI
-        $('.date-btn').removeClass('active bg-blue-900 text-white border-blue-900')
-                      .addClass('bg-gray-100 text-gray-800 hover:bg-gray-200');
-        $(this).removeClass('bg-gray-100 hover:bg-gray-200 text-gray-800')
-               .addClass('active bg-blue-900 text-white border-blue-900');
-        
-        // Show selected date
-        $('#selectedDateDisplay').text(formattedDate);
-        
-        // Load time slots
-        loadTimeSlots(date);
-        $('#timeSlotsContainer').removeClass('hidden');
-    });
-    
-    function loadTimeSlots(date) {
-        console.log('Loading slots for date:', date);
-
-        // Show loading state
-        $('#timeSlotsGrid').html(`
-            <div class="col-span-full flex flex-col items-center justify-center py-8">
-                <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-blue-500 mb-3"></div>
-                <p class="text-gray-600">Loading available slots...</p>
+    <div data-v-390fc2b0="" class="bg-white shadow rounded-lg mt-6">
+        <div data-v-390fc2b0="" class="p-4">
+            <h3 data-v-390fc2b0="" class="text-lg font-semibold mb-2">1st Year</h3>
+            <div data-v-390fc2b0="" class="overflow-x-auto">
+                <table data-v-390fc2b0="" class="min-w-full divide-y divide-gray-200">
+                    <thead data-v-390fc2b0="" class="bg-gray-50">
+                        <tr data-v-390fc2b0="">
+                            <th
+                                data-v-390fc2b0=""
+                                class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                                Exam Year/Term
+                            </th>
+                            <th
+                                data-v-390fc2b0=""
+                                class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                                Course Code
+                            </th>
+                            <th
+                                data-v-390fc2b0=""
+                                class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                                Course Name
+                            </th>
+                            <th
+                                data-v-390fc2b0=""
+                                class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                                Letter Grade
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody data-v-390fc2b0="" class="bg-white divide-y divide-gray-200">
+                        <tr data-v-390fc2b0="" class="hover:bg-gray-50">
+                            <td data-v-390fc2b0="" class="px-3 py-2 whitespace-nowrap text-sm text-gray-500">2022</td>
+                            <td data-v-390fc2b0="" class="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
+                                HSC1851
+                            </td>
+                            <td data-v-390fc2b0="" class="px-3 py-2 text-sm text-gray-500">Bangla 1st Paper</td>
+                            <td
+                                data-v-390fc2b0=""
+                                class="px-3 py-2 whitespace-nowrap text-sm text-gray-500 text-center"
+                            >
+                                B
+                            </td>
+                        </tr>
+                        <tr data-v-390fc2b0="" class="hover:bg-gray-50">
+                            <td data-v-390fc2b0="" class="px-3 py-2 whitespace-nowrap text-sm text-gray-500">2022</td>
+                            <td data-v-390fc2b0="" class="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
+                                HSC1852
+                            </td>
+                            <td data-v-390fc2b0="" class="px-3 py-2 text-sm text-gray-500">English 1st Paper</td>
+                            <td
+                                data-v-390fc2b0=""
+                                class="px-3 py-2 whitespace-nowrap text-sm text-gray-500 text-center"
+                            >
+                                B
+                            </td>
+                        </tr>
+                        <tr data-v-390fc2b0="" class="hover:bg-gray-50">
+                            <td data-v-390fc2b0="" class="px-3 py-2 whitespace-nowrap text-sm text-gray-500">2022</td>
+                            <td data-v-390fc2b0="" class="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
+                                HSC1853
+                            </td>
+                            <td data-v-390fc2b0="" class="px-3 py-2 text-sm text-gray-500">
+                                Information and Communication Technology
+                            </td>
+                            <td
+                                data-v-390fc2b0=""
+                                class="px-3 py-2 whitespace-nowrap text-sm text-gray-500 text-center"
+                            >
+                                B
+                            </td>
+                        </tr>
+                        <tr data-v-390fc2b0="" class="hover:bg-gray-50">
+                            <td data-v-390fc2b0="" class="px-3 py-2 whitespace-nowrap text-sm text-gray-500">2022</td>
+                            <td data-v-390fc2b0="" class="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
+                                HSC1856
+                            </td>
+                            <td data-v-390fc2b0="" class="px-3 py-2 text-sm text-gray-500">
+                                Islamic History and Culture 1st Paper
+                            </td>
+                            <td
+                                data-v-390fc2b0=""
+                                class="px-3 py-2 whitespace-nowrap text-sm text-gray-500 text-center"
+                            >
+                                A
+                            </td>
+                        </tr>
+                        <tr data-v-390fc2b0="" class="hover:bg-gray-50">
+                            <td data-v-390fc2b0="" class="px-3 py-2 whitespace-nowrap text-sm text-gray-500">2022</td>
+                            <td data-v-390fc2b0="" class="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
+                                HSC1857
+                            </td>
+                            <td data-v-390fc2b0="" class="px-3 py-2 text-sm text-gray-500">
+                                Civics and Good Governance 1st Paper
+                            </td>
+                            <td
+                                data-v-390fc2b0=""
+                                class="px-3 py-2 whitespace-nowrap text-sm text-gray-500 text-center"
+                            >
+                                C
+                            </td>
+                        </tr>
+                        <tr data-v-390fc2b0="" class="hover:bg-gray-50">
+                            <td data-v-390fc2b0="" class="px-3 py-2 whitespace-nowrap text-sm text-gray-500">2022</td>
+                            <td data-v-390fc2b0="" class="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
+                                HSC1862
+                            </td>
+                            <td data-v-390fc2b0="" class="px-3 py-2 text-sm text-gray-500">Social Work 1st Paper</td>
+                            <td
+                                data-v-390fc2b0=""
+                                class="px-3 py-2 whitespace-nowrap text-sm text-gray-500 text-center"
+                            >
+                                C
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
-        `);
+        </div>
+    </div>
+    <div data-v-390fc2b0="" class="bg-white shadow rounded-lg mt-6">
+        <div data-v-390fc2b0="" class="p-4">
+            <h3 data-v-390fc2b0="" class="text-lg font-semibold mb-2">2nd Year</h3>
+            <div data-v-390fc2b0="" class="overflow-x-auto">
+                <table data-v-390fc2b0="" class="min-w-full divide-y divide-gray-200">
+                    <thead data-v-390fc2b0="" class="bg-gray-50">
+                        <tr data-v-390fc2b0="">
+                            <th
+                                data-v-390fc2b0=""
+                                class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                                Exam Year/Term
+                            </th>
+                            <th
+                                data-v-390fc2b0=""
+                                class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                                Course Code
+                            </th>
+                            <th
+                                data-v-390fc2b0=""
+                                class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                                Course Name
+                            </th>
+                            <th
+                                data-v-390fc2b0=""
+                                class="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+                            >
+                                Letter Grade
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody data-v-390fc2b0="" class="bg-white divide-y divide-gray-200">
+                        <tr data-v-390fc2b0="" class="hover:bg-gray-50">
+                            <td data-v-390fc2b0="" class="px-3 py-2 whitespace-nowrap text-sm text-gray-500">2022</td>
+                            <td data-v-390fc2b0="" class="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
+                                HSC2851
+                            </td>
+                            <td data-v-390fc2b0="" class="px-3 py-2 text-sm text-gray-500">Bangla 2nd Paper</td>
+                            <td
+                                data-v-390fc2b0=""
+                                class="px-3 py-2 whitespace-nowrap text-sm text-gray-500 text-center"
+                            >
+                                C
+                            </td>
+                        </tr>
+                        <tr data-v-390fc2b0="" class="hover:bg-gray-50">
+                            <td data-v-390fc2b0="" class="px-3 py-2 whitespace-nowrap text-sm text-gray-500">2022</td>
+                            <td data-v-390fc2b0="" class="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
+                                HSC2852
+                            </td>
+                            <td data-v-390fc2b0="" class="px-3 py-2 text-sm text-gray-500">English 2nd Paper</td>
+                            <td
+                                data-v-390fc2b0=""
+                                class="px-3 py-2 whitespace-nowrap text-sm text-gray-500 text-center"
+                            >
+                                A-
+                            </td>
+                        </tr>
+                        <tr data-v-390fc2b0="" class="hover:bg-gray-50">
+                            <td data-v-390fc2b0="" class="px-3 py-2 whitespace-nowrap text-sm text-gray-500">2022</td>
+                            <td data-v-390fc2b0="" class="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
+                                HSC2856
+                            </td>
+                            <td data-v-390fc2b0="" class="px-3 py-2 text-sm text-gray-500">
+                                Islamic History and Culture 2nd Paper
+                            </td>
+                            <td
+                                data-v-390fc2b0=""
+                                class="px-3 py-2 whitespace-nowrap text-sm text-gray-500 text-center"
+                            >
+                                A-
+                            </td>
+                        </tr>
+                        <tr data-v-390fc2b0="" class="hover:bg-gray-50">
+                            <td data-v-390fc2b0="" class="px-3 py-2 whitespace-nowrap text-sm text-gray-500">2022</td>
+                            <td data-v-390fc2b0="" class="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
+                                HSC2857
+                            </td>
+                            <td data-v-390fc2b0="" class="px-3 py-2 text-sm text-gray-500">
+                                Civics and Good Governance 2nd Paper
+                            </td>
+                            <td
+                                data-v-390fc2b0=""
+                                class="px-3 py-2 whitespace-nowrap text-sm text-gray-500 text-center"
+                            >
+                                B
+                            </td>
+                        </tr>
+                        <tr data-v-390fc2b0="" class="hover:bg-gray-50">
+                            <td data-v-390fc2b0="" class="px-3 py-2 whitespace-nowrap text-sm text-gray-500">2022</td>
+                            <td data-v-390fc2b0="" class="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
+                                HSC2862
+                            </td>
+                            <td data-v-390fc2b0="" class="px-3 py-2 text-sm text-gray-500">Social Work 2nd Paper</td>
+                            <td
+                                data-v-390fc2b0=""
+                                class="px-3 py-2 whitespace-nowrap text-sm text-gray-500 text-center"
+                            >
+                                B
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div data-v-390fc2b0="" class="bg-white shadow rounded-lg mt-6">
+        <div data-v-390fc2b0="" class="p-4">
+            <h3 data-v-390fc2b0="" class="text-lg font-semibold mb-2">Note</h3>
+            <p data-v-390fc2b0="" class="text-sm text-gray-600">
+                (-)- Waiver, AB- Absent, PR- Problem Related to OMR Sheet fill-up, RP- Expelled in the respective
+                course, WH- Withheld, IC- Incomplete, NA- Not Applicable, X- No Grade Received
+            </p>
+        </div>
+    </div>
+    <!---->
+</div>
 
-        $.ajax({
-            url: '{{ route("booking.check-seat") }}',
-            method: 'POST',
-            data: {
-                _token: '{{ csrf_token() }}',
-                date: date
-            },
-            success: function(response) {
-                console.log('API response:', response);
-                
-                // First check for Friday/Saturday restriction
-                if (response.message && response.message.includes('not available on Fridays and Saturdays')) {
-                    $('#timeSlotsGrid').html(`
-                        <div class="col-span-full text-center py-8 text-gray-500">
-                            <i class="fas fa-calendar-times fa-2x mb-3"></i>
-                            <p>${response.message}</p>
-                            <p class="text-sm mt-2">Please select a different date.</p>
-                        </div>
-                    `);
-                    return;
-                }
-                
-                // Then check for other messages
-                if (response.message) {
-                    showInfoMessage(response.message);
-                    return;
-                }
-                
-                // Ensure we have timeSlots array
-                if (!response.timeSlots || !Array.isArray(response.timeSlots)) {
-                    showErrorMessage('Invalid time slots data received');
-                    return;
-                }
-                
-                // Filter out any invalid slots
-                const validSlots = response.timeSlots.filter(slot => 
-                    slot && 
-                    slot.id && 
-                    slot.time_slot && 
-                    typeof slot.available_seats === 'number'
-                );
+                        </main>
 
-                if (validSlots.length === 0) {
-                    showInfoMessage('No valid time slots available');
-                    return;
-                }
-
-                // Display available time slots
-                renderTimeSlots(validSlots);
-            },
-            error: function(xhr, status, error) {
-                console.error('AJAX Error:', status, error, xhr.responseText);
-                showErrorMessage('Error loading time slots. Please try again.');
-            }
-        });
-    }
-
-    function renderTimeSlots(slots) {
-        let timeSlotsHtml = '';
-        
-        slots.forEach(slot => {
-            timeSlotsHtml += `
-                <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                    <h3 class="font-medium text-lg mb-3 text-gray-800">
-                        <i class="far fa-clock mr-2"></i>
-                        ${slot.time_slot}
-                    </h3>
-                    <div class="grid grid-cols-5 gap-2">
-            `;
-            
-            // Generate 15 seats
-            for (let seat = 1; seat <= 15; seat++) {
-                const isBooked = slot.bookings && slot.bookings.some(b => b.seat === seat);
-                const bookingInfo = slot.bookings && slot.bookings.find(b => b.seat === seat);
-                
-                if (isBooked) {
-                    timeSlotsHtml += `
-                        <div class="seat booked bg-red-600 text-white rounded cursor-not-allowed relative"
-                             title="Booked by ${bookingInfo?.std_id || 'another student'}">
-                            <i class="fas fa-laptop laptop-icon"></i>
-                            <span class="seat-number">${seat}</span>
-                        </div>
-                    `;
-                } else {
-                    timeSlotsHtml += `
-                        <div class="seat available bg-green-500 text-white rounded cursor-pointer relative"
-                             data-seat="${seat}" 
-                             data-time-slot="${slot.id}"
-                             data-time-slot-name="${slot.time_slot}">
-                            <i class="fas fa-laptop laptop-icon"></i>
-                            <span class="seat-number">${seat}</span>
-                        </div>
-                    `;
-                }
-            }
-            
-            timeSlotsHtml += `
-                    </div>
-                    <div class="mt-2 text-sm text-gray-600">
-                        Available seats: ${slot.available_seats}/15
+                        <footer class="border-t border-slate-200 bg-white/75 backdrop-blur-sm mt-8">
+                            <div class="container mx-auto px-4">
+                                <div class="flex items-center justify-between py-4">
+                                    <p class="text-sm text-slate-600">© Bangladesh Open University.</p>
+                                    <div class="flex items-center space-x-4">
+                                        <p class="text-sm text-slate-600">
+                                            Development &amp; maintenance by:
+                                            <a
+                                                class="text-sm text-slate-600 hover:text-blue-600"
+                                                href="https://bou.ac.bd/Division/ICTELearning"
+                                                target="_blank"
+                                                title="ICT Unit, ICT &amp; e-Learning Center, BOU"
+                                            >
+                                                ICT Unit, ICT &amp; e-Learning Center, BOU.
+                                            </a>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </footer>
                     </div>
                 </div>
-            `;
-        });
-        
-        $('#timeSlotsGrid').html(timeSlotsHtml);
-        bindSeatClickEvents();
-    }
-
-    function bindSeatClickEvents() {
-        $('.seat.available').on('click', function() {
-            const timeSlotId = $(this).data('time-slot');
-            const timeSlotName = $(this).data('time-slot-name');
-            const seat = $(this).data('seat');
-            const date = $('.date-btn.active').data('date');
-            const formattedDate = new Date(date).toLocaleDateString('en-US', { 
-                weekday: 'short', 
-                month: 'short', 
-                day: 'numeric' 
-            });
-            
-            $('#modalDate').val(date);
-            $('#modalTimeSlot').val(timeSlotId);
-            $('#modalSeat').val(seat);
-            $('#selectedSlotInfo').text(`${timeSlotName} • ${formattedDate}`);
-            $('#selectedSeatInfo').text(`Seat ${seat}`);
-            $('#studentId').val('').focus();
-            $('#studentMessage').text('').removeClass('text-green-600 text-red-600');
-            $('#bookingModal').removeClass('hidden');
-        });
-    }
-
-    function showInfoMessage(message) {
-        $('#timeSlotsGrid').html(`
-            <div class="col-span-full text-center py-8 text-gray-500">
-                <i class="fas fa-calendar-times fa-2x mb-3"></i>
-                <p>${message}</p>
             </div>
-        `);
-    }
-
-    function showErrorMessage(message) {
-        const currentDate = $('.date-btn.active').data('date');
-        $('#timeSlotsGrid').html(`
-            <div class="col-span-full text-center py-8 text-red-500">
-                <i class="fas fa-exclamation-circle fa-2x mb-3"></i>
-                <p>${message}</p>
-                <button onclick="loadTimeSlots('${currentDate}')" class="mt-2 px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">
-                    Retry
-                </button>
-            </div>
-        `);
-    }
-    
-    // Student ID validation
-    $('#studentId').on('blur', function() {
-        const studentId = $(this).val().trim();
-        if (studentId) {
-            checkStudentExists(studentId);
-        } else {
-            $('#studentMessage').text('').removeClass('text-green-600 text-red-600');
-        }
-    });
-    
-    function checkStudentExists(studentId) {
-        $('#studentMessage').text('Checking...').removeClass('text-green-600 text-red-600').addClass('text-gray-600');
-        
-        $.ajax({
-            url: '{{ route("booking.check-student") }}',
-            method: 'POST',
-            data: {
-                _token: '{{ csrf_token() }}',
-                std_id: studentId
-            },
-            success: function(data) {
-                if (data.exists) {
-                    $('#studentMessage').text(`Valid student: ${data.student_name}`)
-                                      .removeClass('text-gray-600 text-red-600')
-                                      .addClass('text-green-600');
-                } else {
-                    $('#studentMessage').text('Student ID not found in database')
-                                      .removeClass('text-gray-600 text-green-600')
-                                      .addClass('text-red-600');
-                }
-            },
-            error: function() {
-                $('#studentMessage').text('Error checking student ID')
-                                  .removeClass('text-gray-600 text-green-600')
-                                  .addClass('text-red-600');
-            }
-        });
-    }
-    
-    // Modal controls
-    $('#cancelBooking, #cancelBookingBtn').on('click', function() {
-        $('#bookingModal').addClass('hidden');
-    });
-    
-    // Close modal when clicking outside
-    $('#bookingModal').on('click', function(e) {
-        if (e.target === this) {
-            $(this).addClass('hidden');
-        }
-    });
-    
-    // Form submission
-    $('#bookSeatForm').on('submit', function(e) {
-        e.preventDefault();
-        
-        const submitBtn = $('#submitBtn');
-        const originalBtnText = submitBtn.html();
-        const statusMessage = $('#bookingStatusMessage');
-        
-        submitBtn.prop('disabled', true);
-        submitBtn.html(`
-            <i class="fas fa-spinner animate-spin mr-2"></i>
-            Processing...
-        `);
-        statusMessage.addClass('hidden').removeClass('bg-green-100 border-green-500 text-green-700 bg-red-100 border-red-500 text-red-700');
-        
-        $.ajax({
-            url: '{{ route("booking.book-seat") }}',
-            method: 'POST',
-            data: $(this).serialize(),
-            success: function(response) {
-                statusMessage.removeClass('hidden')
-                    .addClass('bg-green-100 border-l-4 border-green-500 text-green-700')
-                    .html(`
-                        <div class="flex items-center">
-                            <i class="fas fa-check-circle mr-2"></i>
-                            <p>${response.success}</p>
-                        </div>
-                    `);
-                
-                // Clear form and close modal after 2 seconds
-                setTimeout(() => {
-                    $('#bookingModal').addClass('hidden');
-                    $('#studentId').val('');
-                    statusMessage.addClass('hidden');
-                    
-                    // Refresh the slots after booking
-                    loadTimeSlots($('#modalDate').val());
-                }, 2000);
-            },
-            error: function(xhr) {
-                let errorMessage = 'Failed to book seat. Please try again.';
-                if (xhr.responseJSON && xhr.responseJSON.error) {
-                    errorMessage = xhr.responseJSON.error;
-                }
-                
-                statusMessage.removeClass('hidden')
-                    .addClass('bg-red-100 border-l-4 border-red-500 text-red-700')
-                    .html(`
-                        <div class="flex items-center">
-                            <i class="fas fa-exclamation-circle mr-2"></i>
-                            <p>${errorMessage}</p>
-                        </div>
-                    `);
-            },
-            complete: function() {
-                submitBtn.prop('disabled', false).html(originalBtnText);
-            }
-        });
-    });
-});
-    </script>
-</body>
+        </div>
+    </body>
 </html>

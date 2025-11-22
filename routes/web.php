@@ -18,7 +18,16 @@ use Illuminate\Support\Str;
 */
 
 
-Route::get('/', [FrontendBookingController::class, 'welcome'])->name('welcome');
+// Route::get('/', [FrontendBookingController::class, 'welcome'])->name('welcome');
+Route::get('/', [FrontendBookingController::class, 'result'])->name('result');
+Route::get('/result/download/{studentId}', [FrontendBookingController::class, 'downloadPdf'])->name('result.download');
+// In web.php
+Route::get('/test-qr/{studentId}', function($studentId) {
+    return QrCode::size(200)->generate(route('transcript.download', $studentId));
+});
+Route::get('/verify-qr/{studentId}', [FrontendBookingController::class, 'verifyTranscript'])->name('transcript.verify');
+Route::get('/transcript/{studentId}/download', [FrontendBookingController::class, 'downloadPdf'])->name('transcript.download');
+
 
 Route::post('/check-seat', [FrontendBookingController::class, 'checkSeatAvailability'])
     ->name('booking.check-seat');

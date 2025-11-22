@@ -1,0 +1,21 @@
+            .animate-marquee-horizontal[data-v-390fc2b0] {
+                animation: marquee-390fc2b0 30s linear infinite;
+                display: inline-block;
+                white-space: nowrap
+            }
+
+            @keyframes marquee-390fc2b0 {
+                0% {
+                    transform: translateX(100%)
+                }
+
+                to {
+                    transform: translateX(-100%)
+                }
+            }
+
+            @media print {
+                .print-button[data-v-390fc2b0],footer[data-v-390fc2b0],form[data-v-390fc2b0],header[data-v-390fc2b0] {
+                    display: none!important
+                }
+            }

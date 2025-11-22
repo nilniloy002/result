@@ -101,6 +101,16 @@
                 </p>
             </a>
         </li>
+
+        <li class="nav-item">
+            <a href="{{ route('admin.result.index') }}" 
+            class="nav-link {{ Route::is('admin.result.*') ? 'active' : '' }}">
+                <i class="nav-icon fas fa-clock"></i>
+                <p>Results
+                </p>
+            </a>
+      
+        </li>
         
         @endrole
 

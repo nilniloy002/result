@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Booking;
 use App\Models\Student;
+use App\Models\Result;
 use App\Models\TimeSlot;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use PDF;
 
 class FrontendBookingController extends Controller
 {
@@ -18,6 +21,124 @@ class FrontendBookingController extends Controller
             
         return view('welcome', compact('timeSlots'));
     }
+
+      public function result(Request $request)
+    {
+        $studentId = $request->get('student_id');
+        $result = null;
+
+        if ($studentId) {
+            $result = Result::active()
+                ->where('student_id', $studentId)
+                ->first();
+
+            if (!$result) {
+                return back()->with('error', 'No result found for the provided Student ID.');
+            }
+
+            // Filter out courses with N/A course_code at controller level
+            $result = $this->filterInvalidCourses($result);
+        }
+
+        return view('result', compact('result', 'studentId'));
+    }
+
+    public function verifyTranscript($studentId)
+    {
+        $result = Result::active()
+            ->where('student_id', $studentId)
+            ->first();
+
+        if (!$result) {
+            abort(404, 'Transcript not found');
+        }
+
+        $result = $this->filterInvalidCourses($result);
+
+        // Generate QR code for verification page
+        $qrCodeBase64 = null;
+        try {
+            $qrCode = QrCode::format('png')
+                ->size(100)
+                ->margin(1)
+                ->color(0, 0, 0)
+                ->backgroundColor(255, 255, 255)
+                ->generate(route('transcript.verify', $result->student_id));
+            
+            $qrCodeBase64 = base64_encode($qrCode);
+        } catch (\Exception $e) {
+            \Log::error('QR Code generation failed: ' . $e->getMessage());
+            $qrCodeBase64 = null;
+        }
+
+        return view('result-verify', compact('result', 'qrCodeBase64'));
+    }
+   public function downloadPdf($studentId)
+    {
+        $result = Result::active()
+            ->where('student_id', $studentId)
+            ->firstOrFail();
+
+        $result = $this->filterInvalidCourses($result);
+
+        // Generate QR code as base64 - SIMPLE APPROACH
+        $qrCodeBase64 = null;
+        try {
+            $qrCode = QrCode::format('png')
+                ->size(100) // Smaller size for PDF
+                ->margin(1)
+                ->color(0, 0, 0) // Black color
+                ->backgroundColor(255, 255, 255) // White background
+                ->generate(route('transcript.download', $result->student_id));
+            
+            $qrCodeBase64 = base64_encode($qrCode);
+        } catch (\Exception $e) {
+            \Log::error('QR Code generation failed: ' . $e->getMessage());
+            $qrCodeBase64 = null;
+        }
+
+        // Use DomPDF
+        $pdf = \PDF::loadView('result-pdf', compact('result', 'qrCodeBase64'));
+        $pdf->setPaper('A4', 'portrait');
+        $pdf->setOptions([
+            // 'dpi' => 150,
+            'defaultFont' => 'dejavu sans',
+            'isHtml5ParserEnabled' => true,
+            'isRemoteEnabled' => false, // Disable remote for better performance
+            'isPhpEnabled' => true,
+        ]);
+        
+        return $pdf->download("transcript_{$result->student_id}.pdf");
+    }
+
+    /**
+     * Filter out courses with invalid course codes
+     */
+    private function filterInvalidCourses($result)
+    {
+        if ($result->semester_results) {
+            $filteredResults = [];
+            
+            foreach ($result->semester_results as $semester => $courses) {
+                $filteredCourses = array_filter($courses, function($course) {
+                    $courseCode = $course['course_code'] ?? '';
+                    return $courseCode !== 'N/A' && 
+                           $courseCode !== '' && 
+                           !empty($courseCode);
+                });
+                
+                if (count($filteredCourses) > 0) {
+                    $filteredResults[$semester] = array_values($filteredCourses);
+                }
+            }
+            
+            // Update the result object with filtered data
+            $result->semester_results = $filteredResults;
+        }
+
+        return $result;
+    }
+
 
      public function checkSeatAvailability(Request $request)
     {
