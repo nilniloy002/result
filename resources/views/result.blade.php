@@ -197,7 +197,7 @@
                                                 @foreach($result->semester_results[$semester] as $course)
                                                 <tr class="hover:bg-gray-50">
                                                     <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
-                                                        {{ $result->passing_year }}
+                                                        {{ $course['year'] ?? 'N/A' }}
                                                     </td>
                                                     <td class="px-3 py-2 whitespace-nowrap text-sm text-gray-500">
                                                         {{ $course['course_code'] ?? 'N/A' }}
