@@ -154,7 +154,7 @@
                                                         <select name="semester_results[{{ $semester }}][{{ $i }}][grade]" 
                                                                 class="form-control form-control-sm">
                                                             <option value="">Select Grade</option>
-                                                            @foreach(['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'D', 'F', 'P', 'I'] as $grade)
+                                                            @foreach(['A+', 'A', 'A-', 'B+', 'B', 'B-', 'C+', 'C', 'C-','D', 'F', 'P', 'I'] as $grade)
                                                                 <option value="{{ $grade }}" {{ old("semester_results.$semester.$i.grade") == $grade ? 'selected' : '' }}>
                                                                     {{ $grade }}
                                                                 </option>
@@ -256,6 +256,7 @@
                                                 <option value="B-">B-</option>
                                                 <option value="C+">C+</option>
                                                 <option value="C">C</option>
+                                                <option value="C-">C-</option>
                                                 <option value="D">D</option>
                                                 <option value="F">F</option>
                                                 <option value="P">Pass</option>
