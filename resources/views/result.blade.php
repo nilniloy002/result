@@ -160,10 +160,12 @@
                                             <dt class="font-semibold">Passing Year:</dt>
                                             <dd class="">{{ $result->passing_year }}</dd>
                                         </div>
-                                        <div class="flex justify-between sm:col-span-1">
-                                            <dt class="font-semibold">G P A:</dt>
-                                            <dd class="">{{ number_format($result->gpa_cgpa, 2) }}</dd>
-                                        </div>
+                                      <div class="flex justify-between sm:col-span-1">
+                                        <dt class="font-semibold">
+                                            {{ $result->program == "Secondary School Certificate" || $result->program == "Higher Secondary Certificate" ? 'G P A:' : 'C G P A:' }}
+                                        </dt>
+                                        <dd class="">{{ number_format($result->gpa_cgpa, 2) }}</dd>
+                                    </div>
                                     </dl>
                                 </div>
                             </div>
