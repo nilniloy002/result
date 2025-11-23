@@ -130,7 +130,7 @@
                                     <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 text-sm">
                                         <div class="flex justify-between sm:col-span-1">
                                             <dt class="font-semibold">Program:</dt>
-                                            <dd class="">Higher Secondary Certificate</dd>
+                                            <dd class="">{{ $result->program }}</dd>
                                         </div>
                                         <div class="flex justify-between sm:col-span-1">
                                             <dt class="font-semibold">Study Center:</dt>

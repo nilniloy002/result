@@ -15,6 +15,7 @@ class Result extends Model
         'student_name',
         'father_name',
         'mother_name',
+        'program',
         'study_center',
         'batch',
         'passing_year',

@@ -189,7 +189,7 @@
     <img class="logo" src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('admin/dist/img/bou-logo-lg-bw.png'))) }}" alt="BOU logo">
     <div class="title">
       <h1>Bangladesh Open University</h1>
-      <span>Higher Secondary Certificate<br>ACADEMIC RECORD (Online Version)</span>
+      <span>{{ $result->program }}<br>ACADEMIC RECORD (Online Version)</span>
     </div>
   </div>
 

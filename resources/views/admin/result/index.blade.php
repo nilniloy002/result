@@ -26,10 +26,11 @@
                 <thead>
                     <tr>
                         <th>#</th>
-                        <th>Student ID</th>
-                        <th>Student Name</th>
+                        <th>Std. ID</th>
+                        <th>S.N</th>
+                        <th>P.N</th>
                         <th>Batch</th>
-                        <th>Passing Year</th>
+                        <th>P.Y</th>
                         <th>GPA/CGPA</th>
                         <th>Semesters</th>
                         <th>Status</th>
@@ -42,6 +43,7 @@
                             <td>{{ ($results->currentPage() - 1) * $results->perPage() + $loop->iteration }}</td>
                             <td>{{ $result->student_id }}</td>
                             <td>{{ $result->student_name }}</td>
+                            <td>{{ $result->program }}</td>
                             <td>{{ $result->batch }}</td>
                             <td>{{ $result->passing_year }}</td>
                             <td>{{ $result->gpa_cgpa }}</td>

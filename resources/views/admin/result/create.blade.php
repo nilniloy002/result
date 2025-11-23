@@ -41,6 +41,15 @@
                 </div>
 
                 <div class="row">
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Program *</label>
+                            <input type="text" name="program" class="form-control" value="{{ old('program') }}" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row">
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Study Center *</label>
