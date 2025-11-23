@@ -161,7 +161,7 @@
                                             <dd class="">{{ $result->passing_year }}</dd>
                                         </div>
                                         <div class="flex justify-between sm:col-span-1">
-                                            <dt class="font-semibold">GPA:</dt>
+                                            <dt class="font-semibold">G P A:</dt>
                                             <dd class="">{{ number_format($result->gpa_cgpa, 2) }}</dd>
                                         </div>
                                     </dl>
