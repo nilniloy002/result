@@ -194,17 +194,20 @@
   </div>
 
 <div class="qr">
-        @if(!$qrCodeBase64)
+        @if($qrCodeBase64)
           <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('admin/dist/img/qr.png'))) }}" 
                width="70" height="70"
                alt="Verify Transcript">
         @else
-          <div class="qr-fallback">
+          <!-- <div class="qr-fallback">
             <div style="font-weight: bold; margin-bottom: 2px;">VERIFY</div>
             <div style="font-size: 5px;">Online at:</div>
             <div style="font-size: 4px; margin: 1px 0;">bou.edu.bd</div>
             <div style="font-weight: bold;">ID: {{ substr($result->student_id, -4) }}</div>
-          </div>
+          </div> -->
+          <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('admin/dist/img/qr.png'))) }}" 
+               width="70" height="70"
+               alt="Verify Transcript">
         @endif
         
       </div>
