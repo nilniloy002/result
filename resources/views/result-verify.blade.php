@@ -226,7 +226,7 @@
 
       <div class="qr">
         @if(!$qrCodeBase64)
-          <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('admin/dist/img/qr.png'))) }}" 
+          <img src="data:image/png;base64,{{ base64_encode(file_get_contents(public_path('admin/dist/img/qrn.png'))) }}" 
                width="70" height="70"
                alt="Verify Transcript">
         @else
